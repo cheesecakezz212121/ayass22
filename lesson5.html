@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الدرس الخامس (نحو): ظن وأخواتها | بيئة التعلم المدمج</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Confetti للاحتفالات -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts (Cairo, Almarai, Amiri) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@700;800&family=Amiri:wght@700&family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#0b192c',
+                            royal: '#1e3e62',
+                            gold: '#d4af37',
+                            surface: '#f8fafc'
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        almarai: ['Almarai', 'sans-serif'],
+                        amiri: ['Amiri', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .academic-logo {
+            width: 56px;
+            height: 56px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
+        }
+
+        .arabic-diacritics {
+            font-family: 'Amiri', 'Cairo', serif;
+            line-height: 2;
+        }
+
+        .option-btn {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 3px 0 #cbd5e1;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 0 #94a3b8;
+        }
+        .option-btn:active:not(:disabled) {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #94a3b8;
+        }
+
+        .option-btn.correct {
+            background-color: #10b981 !important;
+            color: white !important;
+            border-color: #059669 !important;
+            box-shadow: 0 3px 0 #047857 !important;
+        }
+
+        .option-btn.wrong {
+            background-color: #ef4444 !important;
+            color: white !important;
+            border-color: #dc2626 !important;
+            box-shadow: 0 3px 0 #b91c1c !important;
+            animation: shake 0.35s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.92); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+            animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+    <!-- ==================== HEADER الرسمي الموحد ==================== -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5">
+            <div class="flex items-center justify-between gap-4">
+                
+                <!-- اليمين: زر العودة + شعار الجامعة -->
+                <div class="flex items-center gap-3 w-1/4 justify-start">
+                    <a href="index.html" title="الرجوع للصفحة الرئيسية" class="p-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-brand-royal transition-all flex items-center gap-1.5 text-xs font-bold shadow-2xs">
+                        <i class="fa-solid fa-arrow-right"></i>
+                        <span class="hidden sm:inline">الرئيسية</span>
+                    </a>
+                    
+                    <div class="hidden md:flex items-center justify-center">
+                        <img src="images/19_2018-636739034659610300-961.jpg" 
+                             alt="جامعة الوادي الجديد" 
+                             class="academic-logo"
+                             onerror="this.style.display='none'; document.getElementById('uni-fallback-l5').classList.remove('hidden');">
+                        <div id="uni-fallback-l5" class="hidden w-11 h-11 rounded-xl bg-brand-navy text-amber-400 flex items-center justify-center text-lg shadow-xs border border-amber-400/30">
+                            <i class="fa-solid fa-building-columns"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المنتصف: عنوان الدرس والفرع -->
+                <div class="text-center flex-1 max-w-xl">
+                    <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold px-3 py-0.5 rounded-full bg-slate-100 text-brand-navy border border-slate-200">
+                        <i class="fa-solid fa-diagram-project text-brand-royal"></i> فرع النحو • الصف الأول الإعدادي (ف١)
+                    </span>
+                    <h1 class="text-sm sm:text-lg font-black text-brand-navy truncate mt-0.5 font-almarai">
+                        الدرس الثاني (نحو): ظن وأخواتها
+                    </h1>
+                </div>
+
+                <!-- الشمال: شعار كلية التربية -->
+                <div class="flex items-center gap-3 w-1/4 justify-end">
+                    <div class="hidden lg:flex items-center gap-2 bg-amber-50 border border-amber-200/80 px-3 py-1.5 rounded-xl text-xs font-bold text-amber-900">
+                        <i class="fa-solid fa-shapes text-amber-600"></i>
+                        <span>بيئة التعلم المدمج</span>
+                    </div>
+
+                    <div class="flex items-center justify-center">
+                        <img src="images/OIP.webp" 
+                             alt="كلية التربية" 
+                             class="academic-logo"
+                             onerror="this.style.display='none'; document.getElementById('faculty-fallback-l5').classList.remove('hidden');">
+                        <div id="faculty-fallback-l5" class="hidden w-11 h-11 rounded-xl bg-brand-royal text-amber-400 flex items-center justify-center text-lg shadow-xs border border-amber-400/30">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== مساحة العرض التفاعلية ==================== -->
+    <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 flex-1 flex flex-col lg:flex-row gap-6">
+
+        <!-- Sidebar: مسار الأنشطة اللغوية -->
+        <aside class="w-full lg:w-80 flex-shrink-0 space-y-4">
+            
+            <!-- مؤشر التقدم -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-700 mb-2">
+                    <span class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-line text-emerald-600"></i> تقدمك في الدرس
+                    </span>
+                    <span id="progressText" class="text-emerald-700 font-extrabold">20%</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                    <div id="progressBar" class="bg-gradient-to-r from-emerald-500 to-teal-500 h-2.5 rounded-full transition-all duration-500" style="width: 20%;"></div>
+                </div>
+            </div>
+
+            <!-- قائمة المحطات الخمس -->
+            <div class="bg-white rounded-2xl p-3 border border-slate-200 shadow-xs space-y-1.5">
+                <p class="text-[11px] font-bold text-slate-400 px-3 py-1">محطات الأنشطة اللغوية:</p>
+
+                <!-- 1. القصة -->
+                <button onclick="switchStation('story')" id="btn-story" class="station-btn w-full flex items-center justify-between p-3 rounded-xl bg-indigo-50/90 border border-indigo-200 text-indigo-950 font-bold text-xs transition-all">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-amber-500 text-brand-navy flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-crown"></i>
+                        </span>
+                        <div class="text-right">
+                            <span class="block">1. القصة النحوية المشوقة</span>
+                            <span class="text-[10px] text-slate-400 font-normal">الجملة الاسمية في ضيافة ظنّ</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
+                </button>
+
+                <!-- 2. الفيديو والشرح -->
+                <button onclick="switchStation('learn')" id="btn-learn" class="station-btn w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 border border-transparent text-slate-700 font-bold text-xs transition-all">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-royal text-white flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-video"></i>
+                        </span>
+                        <div class="text-right">
+                            <span class="block">2. الفيديو والشرح المبسط</span>
+                            <span class="text-[10px] text-slate-400 font-normal">الرجحان واليقين والتحويل</span>
+                        </div>
+                    </div>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">شرح</span>
+                </button>
+
+                <!-- 3. أنشطة الكتاب التفاعلية (مغامرة ظن وأخواتها - 6 محطات) -->
+                <button onclick="switchStation('games')" id="btn-games" class="station-btn w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 border border-transparent text-slate-700 font-bold text-xs transition-all">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-gamepad"></i>
+                        </span>
+                        <div class="text-right">
+                            <span class="block">3. أنشطة الكتاب التفاعلية</span>
+                            <span class="text-[10px] text-slate-400 font-normal">مغامرة ظن وأخواتها (٦ محطات)</span>
+                        </div>
+                    </div>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-teal-100 text-teal-800">لعبة</span>
+                </button>
+
+                <!-- 4. محاكي عزل الناسخ النحوي -->
+                <button onclick="switchStation('lab')" id="btn-lab" class="station-btn w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 border border-transparent text-slate-700 font-bold text-xs transition-all">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-scissors"></i>
+                        </span>
+                        <div class="text-right">
+                            <span class="block">4. محاكي عزل الناسخ النحوي</span>
+                            <span class="text-[10px] text-slate-400 font-normal">إثبات أصل المبتدأ والخبر</span>
+                        </div>
+                    </div>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">تطبيقي</span>
+                </button>
+
+                <!-- 5. الاختبار النهائي -->
+                <button onclick="switchStation('exam')" id="btn-exam" class="station-btn w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 border border-transparent text-slate-700 font-bold text-xs transition-all">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-file-circle-check"></i>
+                        </span>
+                        <div class="text-right">
+                            <span class="block">5. الاختبار المقنن والشهادة</span>
+                            <span class="text-[10px] text-slate-400 font-normal">قياس الفهم العميق</span>
+                        </div>
+                    </div>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">تقييم</span>
+                </button>
+
+            </div>
+
+            <!-- بطاقة القاعدة الذهبية -->
+            <div class="bg-amber-50/80 border border-amber-200/90 rounded-2xl p-4 text-xs space-y-2">
+                <div class="flex items-center gap-2 font-black text-amber-950">
+                    <i class="fa-solid fa-lightbulb text-amber-600"></i> مفتاح الفهم العميق:
+                </div>
+                <p class="text-amber-950 leading-relaxed text-[11px]">
+                    فرّق بذكاء بين <strong>(رَأَى القلبية)</strong> بمعنى عَلِمَ وتيقّن فتنصب مفعولين (مثل: <em>رأيتُ الصدقَ منجاةً</em>)، وبين <strong>(رَأَى البصرية)</strong> بالعين فتنصب مفعولاً واحداً وما بعدها يُعرب حالاً (مثل: <em>رأيتُ القمرَ منيراً</em>)!
+                </p>
+            </div>
+
+        </aside>
+
+        <!-- Main Display: مساحة العرض الرئيسية -->
+        <main class="flex-1 min-w-0">
+
+            <!-- ==================== 1. المحطة الأولى: القصة النحوية المشوقة ==================== -->
+            <section id="station-story" class="station-view space-y-6">
+                <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                        <div>
+                            <span class="px-3 py-1 bg-amber-100 text-amber-900 rounded-full text-xs font-bold inline-block mb-1">المدخل القصصي للدرس</span>
+                            <h2 class="text-xl sm:text-2xl font-black text-brand-navy font-almarai">قصة الجملة الاسمية في ضيافة عائلة ظن وأخواتها</h2>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl shrink-0">
+                            <i class="fa-solid fa-scroll"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-amber-50/50 via-blue-50/30 to-slate-50 p-6 rounded-2xl border border-amber-200/70 text-slate-700 leading-relaxed space-y-4 text-sm sm:text-base">
+                        <p>
+                            كانت الجملة الاسمية <strong>(التَّعاطُفُ رِسالَةٌ إِنْسانِيَّةٌ)</strong> تعيش في استقرار وهدوء؛ فالمبتدأ مرفوع بالضمة، والخبر مرفوع بالضمة.
+                        </p>
+                        <p>
+                            وفي يوم من الأيام، زارت قرية الجمل عائلة أفعال ناسخة قوية تُدعى <strong>عائلة ظن وأخواتها</strong>، وتنقسم إلى ثلاثة أجنحة:
+                            <br>• جناح <strong>الرجحان والشك</strong>: يقوده (ظَنَّ، حَسِبَ، زَعَمَ، خَالَ).
+                            <br>• وجناح <strong>اليقين والتأكيد</strong>: يقوده (عَلِمَ، وَجَدَ، رَأَى القلبية).
+                            <br>• وجناح <strong>التحويل والصيرورة</strong>: يقوده الفعل (جَعَلَ).
+                        </p>
+                        <p>
+                            دخل الفعل (وَجَدَ) مع فاعله (التاء) على الجملة الاسمية فنسخ حكمها قائلاً: «من الآن فصاعداً، يصبح المبتدأ <strong>مفعولي الأول المنصوب</strong>، ويصبح الخبر <strong>مفعولي الثاني المنصوب</strong>!»، فصارت الجملة: <strong>«وَجَدْتُ التَّعاطُفَ رِسالَةً إِنْسانِيَّةً»</strong>!
+                        </p>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button onclick="switchStation('learn')" class="px-6 py-3 bg-brand-royal hover:bg-brand-navy text-white text-xs font-black rounded-xl shadow-xs flex items-center gap-2 transition-all active:scale-95">
+                            <span>الانتقال إلى الفيديو والشرح المبسط</span>
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== 2. المحطة الثانية: الفيديو والشرح المبسط ==================== -->
+            <section id="station-learn" class="station-view hidden space-y-6">
+                
+                <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                        <h2 class="text-base sm:text-lg font-black text-brand-navy flex items-center gap-2 font-almarai">
+                            <i class="fa-solid fa-circle-play text-rose-600"></i>
+                            المحاضرة المرئية: ظن وأخواتها وعملها في الجملة الاسمية
+                        </h2>
+                        <span class="text-xs bg-slate-100 px-3 py-1 rounded-full text-slate-600 font-semibold">فيديو الدرس الخامس</span>
+                    </div>
+
+                    <!-- مشغل الفيديو المحلي -->
+                    <div class="w-full aspect-video bg-slate-950 rounded-2xl overflow-hidden shadow-inner flex items-center justify-center relative">
+                        <video class="w-full h-full object-contain" controls poster="images/video-cover.png">
+                            <source src="videos/lesson5.mp4" type="video/mp4">
+                            <p class="text-white text-xs p-4 text-center">
+                                ضع ملف فيديو درس ظن وأخواتها في المجلد: <code>videos/lesson5.mp4</code>
+                            </p>
+                        </video>
+                    </div>
+                </div>
+
+                <!-- بطاقات دلالات ظن وأخواتها الثلاث -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- 1. أفعال الرجحان -->
+                    <div class="bg-white border-2 border-amber-500/20 rounded-3xl p-5 shadow-xs relative overflow-hidden">
+                        <div class="w-1.5 h-full bg-amber-500 absolute top-0 right-0"></div>
+                        <span class="px-2.5 py-0.5 bg-amber-50 text-amber-800 rounded-full text-[11px] font-black inline-block mb-2">1. أفعال الرجحان</span>
+                        <h3 class="text-base font-black text-slate-900 mb-1">الشك وترجيح الصواب</h3>
+                        <p class="text-xs text-slate-600 mb-3">تدل على رجحان وقوع الخبر دون يقين قاطع:</p>
+                        <div class="space-y-1.5 text-xs bg-slate-50 p-3 rounded-xl border border-slate-100 font-bold text-slate-700">
+                            <div>• <strong>ظَنَّ:</strong> ظَنَنْتُ أباكَ ذا رحمةٍ.</div>
+                            <div>• <strong>حَسِبَ:</strong> حَسِبْتُ القِيَمَ مُقَيِّدَةً.</div>
+                            <div>• <strong>زَعَمَ، خَالَ:</strong> زَعَمَ صديقي الِاسْتِغْناءَ مُمْكِناً.</div>
+                        </div>
+                    </div>
+
+                    <!-- 2. أفعال اليقين -->
+                    <div class="bg-white border-2 border-emerald-500/20 rounded-3xl p-5 shadow-xs relative overflow-hidden">
+                        <div class="w-1.5 h-full bg-emerald-500 absolute top-0 right-0"></div>
+                        <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-800 rounded-full text-[11px] font-black inline-block mb-2">2. أفعال اليقين</span>
+                        <h3 class="text-base font-black text-slate-900 mb-1">التأكيد والاعتقاد الجازم</h3>
+                        <p class="text-xs text-slate-600 mb-3">تدل على التحقق والثقة التامة بوقوع الخبر:</p>
+                        <div class="space-y-1.5 text-xs bg-slate-50 p-3 rounded-xl border border-slate-100 font-bold text-slate-700">
+                            <div>• <strong>عَلِمَ:</strong> عَلِمْتُ الأُمَّهاتِ ذَواتِ فَضْلٍ.</div>
+                            <div>• <strong>وَجَدَ:</strong> وَجَدْتُ دُعاءَ الأُمِّ مِفْتاحاً لِلنَّجاحِ.</div>
+                            <div>• <strong>رَأَى (القلبية):</strong> أَرَى الْبارِّينَ بِالْوالِدَيْنِ سُعَداءَ.</div>
+                        </div>
+                    </div>
+
+                    <!-- 3. أفعال التحويل -->
+                    <div class="bg-white border-2 border-indigo-500/20 rounded-3xl p-5 shadow-xs relative overflow-hidden">
+                        <div class="w-1.5 h-full bg-indigo-500 absolute top-0 right-0"></div>
+                        <span class="px-2.5 py-0.5 bg-indigo-50 text-indigo-800 rounded-full text-[11px] font-black inline-block mb-2">3. أفعال التحويل</span>
+                        <h3 class="text-base font-black text-slate-900 mb-1">تغيير الحال والانتقال</h3>
+                        <p class="text-xs text-slate-600 mb-3">تدل على تحويل الشيء من حالة إلى أخرى:</p>
+                        <div class="space-y-1.5 text-xs bg-slate-50 p-3 rounded-xl border border-slate-100 font-bold text-slate-700">
+                            <div>• <strong>جَعَلَ:</strong> جَعَلَ التَّعَاوُنُ الصَّعْبَ سَهْلًا.</div>
+                            <div>• <strong>صَيَّرَ:</strong> صَيَّرَ النجارُ الخشبَ باباً.</div>
+                            <div>• <strong>حَوَّلَ:</strong> حَوَّلَ الصانعُ القطنَ ثوباً.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button onclick="switchStation('games')" class="px-6 py-3 bg-brand-royal hover:bg-brand-navy text-white text-xs font-black rounded-xl shadow-xs flex items-center gap-2 transition-all active:scale-95">
+                        <span>الانتقال إلى أنشطة الكتاب التفاعلية</span>
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                </div>
+
+            </section>
+
+            <!-- ==================== 3. المحطة الثالثة: أنشطة الكتاب التفاعلية (مغامرة ظن وأخواتها) ==================== -->
+            <section id="station-games" class="station-view hidden space-y-6">
+                
+                <div class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-indigo-100 shadow-xs space-y-6">
+                    
+                    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                        <div>
+                            <span class="px-3 py-1 bg-indigo-100 text-indigo-900 rounded-full text-[10px] font-bold">أنشطة الكتاب المدرسي التفاعلية</span>
+                            <h2 class="text-lg sm:text-xl font-black text-brand-navy mt-1 font-almarai">مغامرة ظن وأخواتها (٦ محطات متدرجة • ٢٠ سؤالاً)</h2>
+                            <p class="text-xs text-slate-500">اجتز المحطات الستة المقررة في الكتاب المدرسي واجمع النقاط والأوسمة</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="toggleSoundL5()" id="sound-toggle-l5" class="bg-slate-100 hover:bg-slate-200 p-2.5 rounded-xl text-sm border border-slate-200" title="تشغيل/إيقاف الصوت">
+                                🔊
+                            </button>
+                            <button onclick="showMapL5()" class="bg-amber-400 hover:bg-amber-500 text-amber-950 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-2xs">
+                                <span>🗺️</span>
+                                <span>خريطة المحطات</span>
+                            </button>
+                            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-2 rounded-2xl font-black flex items-center gap-1.5 shadow-xs">
+                                <span>🏆</span>
+                                <span id="score-display-l5" class="text-base">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1. شاشة البداية -->
+                    <div id="start-screen-l5" class="bg-slate-50/70 rounded-3xl p-6 sm:p-8 text-center border-2 border-indigo-100 space-y-5">
+                        <div class="text-5xl">🚀</div>
+                        <h3 class="text-2xl sm:text-3xl font-black text-brand-navy font-almarai">مُغَامَرَةُ ظَنَّ وَأَخَوَاتِهَا</h3>
+                        <p class="text-slate-600 text-sm max-w-xl mx-auto leading-relaxed">
+                            أهلاً بك يا بطل النحو! هل أنت مستعد لاجتياز <span class="text-indigo-700 font-bold">٦ محطات تفاعلية</span> شيّقة لإتقان ظن وأخواتها وعلامات نصب المفعولين؟
+                        </p>
+                        <button onclick="showMapL5()" class="bg-brand-royal hover:bg-brand-navy text-white font-black text-base px-8 py-3.5 rounded-2xl shadow-md transition inline-flex items-center gap-2 active:scale-95">
+                            <span>انطلق في المغامرة الآن ⚡</span>
+                        </button>
+                    </div>
+
+                    <!-- 2. شاشة خريطة المحطات (1 إلى 6) -->
+                    <div id="map-screen-l5" class="hidden space-y-4">
+                        <div class="text-center mb-4">
+                            <h4 class="text-lg sm:text-xl font-black text-brand-navy font-almarai">🗺️ خريطة المحطات التفاعلية (١ - ٦)</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">اختر المحطة التي تود التدرب عليها</p>
+                        </div>
+                        <div id="levels-grid-l5" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- يتم توليد البطاقات الست هنا -->
+                        </div>
+                    </div>
+
+                    <!-- 3. شاشة اللعب داخل المحطة -->
+                    <div id="play-screen-l5" class="hidden bg-slate-50/60 rounded-3xl p-5 sm:p-7 border-2 border-indigo-200 space-y-5">
+                        <div>
+                            <div class="flex justify-between items-center text-xs font-bold text-slate-500 mb-2">
+                                <span id="activity-title-display-l5" class="text-indigo-800 font-black">النشاط (١)</span>
+                                <span id="question-counter-l5">السؤال ١ من ٤</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                                <div id="progress-bar-l5" class="bg-gradient-to-l from-sky-500 to-indigo-600 h-full rounded-full transition-all duration-500" style="width: 25%"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white border-2 border-sky-100 rounded-2xl p-5 text-center space-y-2">
+                            <span id="instruction-tag-l5" class="inline-block bg-indigo-100 text-indigo-800 text-xs font-extrabold px-3 py-1 rounded-full">
+                                التعليمات
+                            </span>
+                            <h4 id="question-text-l5" class="arabic-diacritics text-xl sm:text-2xl font-black text-slate-900 leading-relaxed">
+                                نص السؤال يظهر هنا...
+                            </h4>
+                            <p id="question-subtext-l5" class="text-xs text-slate-500 font-semibold"></p>
+                        </div>
+
+                        <div id="options-container-l5" class="grid grid-cols-1 gap-3">
+                            <!-- الخيارات تضاف ديناميكياً -->
+                        </div>
+
+                        <div id="feedback-box-l5" class="hidden rounded-2xl p-4 border-2 transition-all">
+                            <div class="flex items-start gap-3">
+                                <span id="feedback-icon-l5" class="text-2xl">💡</span>
+                                <div class="flex-grow">
+                                    <h5 id="feedback-title-l5" class="font-black text-sm sm:text-base mb-1">أحسنت!</h5>
+                                    <p id="feedback-explanation-l5" class="text-xs sm:text-sm font-medium leading-relaxed"></p>
+                                </div>
+                            </div>
+                            <div class="mt-3 text-left">
+                                <button id="next-btn-l5" onclick="nextQuestionL5()" class="bg-brand-royal hover:bg-brand-navy text-white font-bold px-5 py-2 rounded-xl text-xs shadow-xs transition">
+                                    السؤال التالي ⬅️
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. شاشة نتيجة المحطة -->
+                    <div id="result-screen-l5" class="hidden bg-slate-50 rounded-3xl p-6 text-center border-2 border-amber-300 max-w-lg mx-auto space-y-4 animate-pop">
+                        <div id="result-emoji-l5" class="text-5xl">🎉</div>
+                        <h4 id="result-title-l5" class="text-xl sm:text-2xl font-black text-brand-navy font-almarai">أتممت المحطة بنجاح!</h4>
+                        <p id="result-desc-l5" class="text-slate-600 text-xs sm:text-sm">رائع جداً! لقد أثبتَّ مهارتك في قواعد النحو.</p>
+                        
+                        <div class="bg-white border border-amber-200 rounded-2xl p-4 flex justify-around items-center">
+                            <div>
+                                <div class="text-[11px] text-amber-800 font-bold">مجموع نقاطك</div>
+                                <div id="final-score-l5" class="text-2xl font-black text-amber-600">0</div>
+                            </div>
+                            <div class="h-9 w-0.5 bg-amber-200"></div>
+                            <div>
+                                <div class="text-[11px] text-amber-800 font-bold">التقييم</div>
+                                <div class="text-lg">⭐⭐⭐</div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-3 justify-center pt-1">
+                            <button id="next-level-btn-l5" onclick="goToNextLevelL5()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-6 py-2.5 rounded-xl text-xs shadow-xs transition">
+                                المحطة التالية 🚀
+                            </button>
+                            <button onclick="showMapL5()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-5 py-2.5 rounded-xl text-xs transition">
+                                العودة للخريطة 🗺️
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="flex justify-end">
+                    <button onclick="switchStation('lab')" class="px-6 py-3 bg-brand-royal hover:bg-brand-navy text-white text-xs font-black rounded-xl shadow-xs flex items-center gap-2 transition-all active:scale-95">
+                        <span>الانتقال إلى محاكي عزل الناسخ النحوي</span>
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                </div>
+
+            </section>
+
+            <!-- ==================== 4. المحطة الرابعة: محاكي عزل الناسخ النحوي ==================== -->
+            <section id="station-lab" class="station-view hidden space-y-6">
+                <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs max-w-2xl mx-auto space-y-6">
+                    <div class="text-center pb-4 border-b border-slate-100">
+                        <span class="px-3 py-1 bg-blue-50 text-blue-800 rounded-full text-xs font-bold">تطبيق نحوي تفاعلي</span>
+                        <h2 class="text-xl font-black text-brand-navy mt-1 font-almarai">محاكي عزل الناسخ النحوي واستعادة المبتدأ والخبر</h2>
+                        <p class="text-xs text-slate-500">اختر الجملة وشاهد كيف يعود المفعولان مبتدأً وخبراً مرفوعين بعلامات الرفع الأصلية والفرعية</p>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <button onclick="inspectOriginL5('أَرَى الْبارِّينَ بِالْوالِدَيْنِ سُعَداءَ')" class="px-3.5 py-2 bg-slate-100 hover:bg-blue-50 hover:border-blue-300 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 transition">أَرَى الْبارِّينَ سُعَداءَ</button>
+                        <button onclick="inspectOriginL5('وَجَدْتُ الرَّحْمَةَ وَالتَّواصُلَ صِفَتَيْنِ عَظيمَتَيْنِ')" class="px-3.5 py-2 bg-slate-100 hover:bg-blue-50 hover:border-blue-300 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 transition">وَجَدْتُ الرَّحْمَةَ صِفَتَيْنِ</button>
+                        <button onclick="inspectOriginL5('رَأَيْتُ أَخاكَ واصِلًا لِلرَّحِمِ')" class="px-3.5 py-2 bg-slate-100 hover:bg-blue-50 hover:border-blue-300 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 transition">رَأَيْتُ أَخاكَ واصِلًا</button>
+                        <button onclick="inspectOriginL5('عَلِمْتُ الأُمَّهاتِ ذَواتِ فَضْلٍ')" class="px-3.5 py-2 bg-slate-100 hover:bg-blue-50 hover:border-blue-300 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 transition">عَلِمْتُ الأُمَّهاتِ ذَواتِ فَضْلٍ</button>
+                    </div>
+
+                    <div class="p-6 bg-gradient-to-br from-blue-50/70 to-indigo-50/70 border border-blue-200 rounded-2xl space-y-4 text-center">
+                        <div>
+                            <span class="text-xs text-blue-900 font-bold block mb-1">الجملة مع الفعل الناسخ وفاعله:</span>
+                            <span id="labOriginSentenceL5" class="arabic-diacritics text-xl font-black text-brand-navy">أَرَى الْبارِّينَ بِالْوالِدَيْنِ سُعَداءَ</span>
+                        </div>
+
+                        <div class="p-4 bg-white rounded-xl border border-blue-100 space-y-2">
+                            <span class="text-xs text-slate-400 block">الجملة الاسمية بعد حذف الفعل والفاعل (عزل الناسخ):</span>
+                            <span id="labCutSentenceL5" class="arabic-diacritics text-2xl font-black text-emerald-700 block">«الْبارُّونَ بِالْوالِدَيْنِ سُعَداءُ»</span>
+                            <span id="labVerdictL5" class="block text-xs font-bold text-emerald-900 bg-emerald-50 py-1.5 px-3 rounded-lg border border-emerald-200">
+                                عاد المبتدأ مرفوعاً بالواو (الْبارُّونَ) لأنه جمع مذكر سالم، والخبر مرفوعاً بالضمة (سُعَداءُ).
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button onclick="switchStation('exam')" class="px-6 py-3 bg-brand-royal hover:bg-brand-navy text-white text-xs font-black rounded-xl shadow-xs flex items-center gap-2 transition-all active:scale-95">
+                            <span>الانتقال إلى الاختبار المقنن والشهادة</span>
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== 5. المحطة الخامسة: الاختبار المقنن والشهادة الرقمية ==================== -->
+            <section id="station-exam" class="station-view hidden space-y-6">
+                <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs max-w-3xl mx-auto">
+                    
+                    <div class="text-center pb-6 border-b border-slate-100">
+                        <span class="px-3 py-1 bg-rose-50 text-rose-800 rounded-full text-xs font-black inline-block mb-2">التقويم البعدي للدرس (نحو)</span>
+                        <h2 class="text-xl sm:text-2xl font-black text-brand-navy font-almarai">اختبار الفهم العميق: ظن وأخواتها</h2>
+                        <p class="text-xs text-slate-500 mt-1">أجب عن الأسئلة الستة بدقة لتتوج بشهادة إتقان الدرس باسمك</p>
+                    </div>
+
+                    <form id="quizFormL5" class="space-y-4 pt-4">
+                        
+                        <!-- إدخال اسم الطالب -->
+                        <div class="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl">
+                            <label class="block text-xs font-bold text-amber-950 mb-1.5">اكتب اسمك الثلاثي (ليظهر في شهادة التفوق):</label>
+                            <input type="text" id="studentExamNameL5" placeholder="اكتب اسمك الثلاثي هنا..." class="w-full py-2.5 px-3.5 rounded-xl border border-amber-300 focus:outline-hidden text-sm font-bold text-slate-800 bg-white">
+                        </div>
+
+                        <!-- س 1 -->
+                        <div class="p-4 border border-slate-200 rounded-2xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                            <p class="font-bold text-slate-900 mb-2 text-xs sm:text-sm">١. الصياغة الصحيحة عند إدخال (عَلِمْتُ) على جملة «الأُمَّهاتُ ذَواتُ فَضْلٍ» هي:</p>
+                            <div class="space-y-1.5 text-xs">
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q1" value="correct" class="w-4 h-4 text-brand-royal"> عَلِمْتُ الأُمَّهاتِ ذَواتِ فَضْلٍ (منصوبان بالكسرة لأنهما جمع مؤنث وملحق به)</label>
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q1" value="w1" class="w-4 h-4 text-brand-royal"> عَلِمْتُ الأُمَّهاتَ ذَواتَ فَضْلٍ</label>
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q1" value="w2" class="w-4 h-4 text-brand-royal"> عَلِمْتُ الأُمَّهاتُ ذَواتِ فَضْلٍ</label>
+                            </div>
+                        </div>
+
+                        <!-- س 2 -->
+                        <div class="p-4 border border-slate-200 rounded-2xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                            <p class="font-bold text-slate-900 mb-2 text-xs sm:text-sm">٢. عند حذف الفعل والفاعل من «أَرَى الْبارِّينَ بِالْوالِدَيْنِ سُعَداءَ» تصبح الجملة:</p>
+                            <div class="space-y-1.5 text-xs">
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q2" value="w1" class="w-4 h-4 text-brand-royal"> الْبارِّينَ بِالْوالِدَيْنِ سُعَداءُ</label>
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q2" value="correct" class="w-4 h-4 text-brand-royal"> الْبارُّونَ بِالْوالِدَيْنِ سُعَداءُ (مبتدأ مرفوع بالواو وخبر مرفوع بالضمة)</label>
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q2" value="w2" class="w-4 h-4 text-brand-royal"> الْبارُّونَ بِالْوالِدَيْنِ سُعَداءَ</label>
+                            </div>
+                        </div>
+
+                        <!-- س 3 -->
+                        <div class="p-4 border border-slate-200 rounded-2xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                            <p class="font-bold text-slate-900 mb-2 text-xs sm:text-sm">٣. في أي جملة مما يلي تنصب (رَأَى) مفعولين؟</p>
+                            <div class="space-y-1.5 text-xs">
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q3" value="correct" class="w-4 h-4 text-brand-royal"> رَأَيْتُ الصِّدْقَ مَنْجَاةً لِلْإِنْسَانِ (رؤية قلبية بمعنى علم)</label>
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q3" value="w1" class="w-4 h-4 text-brand-royal"> رَأَيْتُ الْقَمَرَ مُنِيراً فِي السَّمَاءِ</label>
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q3" value="w2" class="w-4 h-4 text-brand-royal"> رَأَيْتُ الطَّائِرَ مُحَلِّقاً فَوْقَ الشَّجَرَةِ</label>
+                            </div>
+                        </div>
+
+                        <!-- س 4 -->
+                        <div class="p-4 border border-slate-200 rounded-2xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                            <p class="font-bold text-slate-900 mb-2 text-xs sm:text-sm">٤. الصياغة الصحيحة عند إدخال (رَأَيْتُ) على جملة «أَخُوكَ واصِلٌ لِلرَّحِمِ» هي:</p>
+                            <div class="space-y-1.5 text-xs">
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q4" value="w1" class="w-4 h-4 text-brand-royal"> رَأَيْتُ أَخُوكَ واصِلًا لِلرَّحِمِ</label>
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q4" value="correct" class="w-4 h-4 text-brand-royal"> رَأَيْتُ أَخاكَ واصِلًا لِلرَّحِمِ (أخاك منصوب بالألف لأنه من الأسماء الخمسة)</label>
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q4" value="w2" class="w-4 h-4 text-brand-royal"> رَأَيْتُ أَخيكَ واصِلٌ لِلرَّحِمِ</label>
+                            </div>
+                        </div>
+
+                        <!-- س 5 -->
+                        <div class="p-4 border border-slate-200 rounded-2xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                            <p class="font-bold text-slate-900 mb-2 text-xs sm:text-sm">٥. الفعل (جَعَلَ) في جملة «جَعَلَ التَّعَاوُنُ الصَّعْبَ سَهْلًا» يفيد:</p>
+                            <div class="space-y-1.5 text-xs">
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q5" value="correct" class="w-4 h-4 text-brand-royal"> التحويل والصيرورة</label>
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q5" value="w1" class="w-4 h-4 text-brand-royal"> الرجحان والشك</label>
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q5" value="w2" class="w-4 h-4 text-brand-royal"> اليقين والتأكيد</label>
+                            </div>
+                        </div>
+
+                        <!-- س 6 -->
+                        <div class="p-4 border border-slate-200 rounded-2xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                            <p class="font-bold text-slate-900 mb-2 text-xs sm:text-sm">٦. تصويب الخطأ في جملة «حَسِبْتُ الْمُهْمِلُونَ نَاجِحُونَ» هو:</p>
+                            <div class="space-y-1.5 text-xs">
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q6" value="correct" class="w-4 h-4 text-brand-royal"> حَسِبْتُ الْمُهْمِلِينَ نَاجِحِينَ (مفعولان منصوبان بالياء)</label>
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q6" value="w1" class="w-4 h-4 text-brand-royal"> حَسِبْتُ الْمُهْمِلُونَ نَاجِحِينَ</label>
+                                <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer"><input type="radio" name="l5_q6" value="w2" class="w-4 h-4 text-brand-royal"> حَسِبْتُ الْمُهْمِلِينَ نَاجِحُونَ</label>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="evaluateQuizL5()" class="w-full py-4 bg-brand-royal hover:bg-brand-navy text-white font-black text-sm rounded-2xl shadow-sm transition-all active:scale-95 mt-4">
+                            تصحيح الاختبار وعرض النتيجة والشهادة <i class="fa-solid fa-square-check mr-1.5"></i>
+                        </button>
+                    </form>
+
+                    <!-- كارت الشهادة الرقمية -->
+                    <div id="certBoxL5" class="hidden mt-6 p-6 rounded-3xl border-4 border-amber-400 bg-amber-50/40 text-center space-y-4">
+                        <i class="fa-solid fa-award text-amber-500 text-5xl animate-bounce"></i>
+                        <div>
+                            <span class="text-xs font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">شهادة إتقان الدرس الثاني (نحو)</span>
+                            <h3 class="text-xl font-black text-brand-navy mt-2 font-almarai">شهادة تفوق وتميز نحوي</h3>
+                            <p class="text-xs text-slate-600 mt-1">تُمنح هذه الشهادة للطالب المتميز:</p>
+                            <h4 id="certNameDisplayL5" class="text-lg font-black text-brand-royal my-1">اسم الطالب</h4>
+                            <p class="text-xs text-slate-700">لإتقانه مهارات الفهم العميق في <strong>ظن وأخواتها ومفعوليها (أصلهما المبتدأ والخبر)</strong>.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-amber-200 inline-block px-6">
+                            <span class="text-xs text-slate-500 block font-bold">الدرجة النهائية:</span>
+                            <span id="certGradeDisplayL5" class="text-2xl font-black text-emerald-700">6 / 6</span>
+                        </div>
+                        <div class="text-[10px] text-slate-400 border-t border-amber-200 pt-2">
+                            جامعة الوادي الجديد • كلية التربية • بيئة تعلم مدمج قائمة على الأنشطة اللغوية
+                        </div>
+                        <div class="flex justify-center gap-3 pt-1">
+                            <button onclick="window.print()" class="px-5 py-2 bg-brand-navy text-white rounded-xl text-xs font-bold shadow-xs">
+                                <i class="fa-solid fa-print ml-1"></i> طباعة الشهادة
+                            </button>
+                            <a href="index.html" class="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-xl text-xs font-bold">
+                                العودة للرئيسية
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- التذييل الأكاديمي -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
+        جامعة الوادي الجديد • كلية التربية • قسم المناهج وطرق التدريس وتكنولوجيا التعليم
+    </footer>
+
+    <!-- ==================== المحرك البرمجي للدرس الخامس ==================== -->
+    <script>
+        let soundEnabledL5 = true;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playTone(type) {
+            if (!soundEnabledL5) return;
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(520, now);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.1);
+                    osc.frequency.setValueAtTime(783.99, now + 0.2);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.linearRampToValueAtTime(160, now + 0.25);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'win') {
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.type = 'triangle';
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.setValueAtTime(freq, now + idx * 0.12);
+                        g.gain.setValueAtTime(0.2, now + idx * 0.12);
+                        g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.12 + 0.25);
+                        o.start(now + idx * 0.12);
+                        o.stop(now + idx * 0.12 + 0.25);
+                    });
+                }
+            } catch (e) {}
+        }
+
+        function toggleSoundL5() {
+            soundEnabledL5 = !soundEnabledL5;
+            document.getElementById('sound-toggle-l5').textContent = soundEnabledL5 ? '🔊' : '🔇';
+            if (soundEnabledL5) playTone('click');
+        }
+
+        const stationProgress = {
+            'story': 20,
+            'learn': 40,
+            'games': 60,
+            'lab': 80,
+            'exam': 100
+        };
+
+        function switchStation(stationId) {
+            document.querySelectorAll('.station-view').forEach(view => view.classList.add('hidden'));
+            document.getElementById(`station-${stationId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.station-btn').forEach(btn => {
+                btn.className = 'station-btn w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 border border-transparent text-slate-700 font-bold text-xs transition-all';
+            });
+            const activeBtn = document.getElementById(`btn-${stationId}`);
+            activeBtn.className = 'station-btn w-full flex items-center justify-between p-3 rounded-xl bg-indigo-50/90 border border-indigo-200 text-indigo-950 font-bold text-xs shadow-2xs';
+
+            const p = stationProgress[stationId] || 20;
+            document.getElementById('progressBar').style.width = `${p}%`;
+            document.getElementById('progressText').innerText = `${p}%`;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ================== لعبة مغامرة ظن وأخواتها (6 محطات كاملة من الكتاب) ==================
+        const activitiesDataL5 = [
+            {
+                id: 1,
+                title: "نَشاط (١): التَّمْهِيدُ وَاكْتِشَافُ ظَنَّ وَأَخَوَاتِهَا",
+                shortTitle: "نشاط (١): استكشاف الأفعال",
+                icon: "🔍",
+                desc: "تعرّف على أفعال اليقين والرجحان والتحويل وعملها في الجملة.",
+                questions: [
+                    {
+                        instruction: "اختر الإجابة الصحيحة",
+                        question: "مَا عَمَلُ (ظَنَّ وَأَخَوَاتِهَا) عِنْدَمَا تَدْخُلُ عَلَى الْجُمْلَةِ الِاسْمِيَّةِ؟",
+                        subtext: "تذكر القاعدة الأساسية للأفعال الناسخة المتعدية لمفعولين",
+                        options: [
+                            "تَنْصِبُ الْمُبْتَدَأَ وَالْخَبَرَ وَيُسَمَّيَانِ مَفْعُولَيْنِ لَهَا",
+                            "تَرْفَعُ الْمُبْتَدَأَ وَتَنْصِبُ الْخَبَرَ",
+                            "تَنْصِبُ الْمُبْتَدَأَ وَتَرْفَعُ الْخَبَرَ"
+                        ],
+                        correctIndex: 0,
+                        explanation: "ممتاز! ظن وأخواتها أفعال ناسخة تدخل على الجملة الاسمية فتنصب المبتدأ ويسمى مفعولاً به أول، وتنصب الخبر ويسمى مفعولاً به ثانياً."
+                    },
+                    {
+                        instruction: "صنّف الفعل",
+                        question: "أَيٌّ مِنَ الْأَفْعَالِ الْآتِيَةِ يُفِيدُ (الْيَقِينَ)؟",
+                        subtext: "أفعال اليقين هي: علم، وجد، رأى (القلبية)",
+                        options: ["وَجَدْتُ", "حَسِبْتُ", "زَعَمَ"],
+                        correctIndex: 0,
+                        explanation: "أحسنت! الفعل (وَجَدَ) يفيد اليقين والتحقق، أما (حَسِبَ وزَعَمَ) فيفيدان الرجحان."
+                    },
+                    {
+                        instruction: "حدد نوع الفعل",
+                        question: "الْفِعْلُ (جَعَلَ) فِي قَوْلِنَا: «جَعَلَ التَّعَاوُنُ الصَّعْبَ سَهْلًا» يُفِيدُ:",
+                        subtext: "لاحظ تغير الشيء من حال إلى حال",
+                        options: ["التَّحْوِيلَ", "الرُّجْحَانَ", "الْيَقِينَ"],
+                        correctIndex: 0,
+                        explanation: "رائع! (جَعَلَ) من أفعال التحويل؛ لأنه يفيد تحويل الشيء من حالة إلى حالة أخرى."
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "نَشاط (٢): أُدْخِلُ ظَنَّ أَوْ إِحْدَى أَخَوَاتِهَا",
+                shortTitle: "نشاط (٢): إدخال ظن وأخواتها",
+                icon: "✍️",
+                desc: "أدخل ظن أو إحدى أخواتها على الجمل الاسمية وغيّر ما يلزم.",
+                questions: [
+                    {
+                        instruction: "أدخل فعلاً ناسخاً وغير ما يلزم",
+                        question: "١. التَّعاطُفُ رِسالَةٌ إِنْسانِيَّةٌ.",
+                        subtext: "اختر الجملة الصحيحة بعد إدخال (وَجَدْتُ)",
+                        options: [
+                            "وَجَدْتُ التَّعاطُفَ رِسالَةً إِنْسانِيَّةً.",
+                            "وَجَدْتُ التَّعاطُفُ رِسالَةً إِنْسانِيَّةً.",
+                            "وَجَدْتُ التَّعاطُفَ رِسالَةٌ إِنْسانِيَّةٌ."
+                        ],
+                        correctIndex: 0,
+                        explanation: "إجابة دقيقة! (التَّعاطُفَ) مفعول به أول منصوب بالفتحة، و(رِسالَةً) مفعول به ثانٍ منصوب بالفتحة."
+                    },
+                    {
+                        instruction: "انتبه لجمع المؤنث السالم!",
+                        question: "٢. الأُمَّهاتُ ذَواتُ فَضْلٍ.",
+                        subtext: "بِمَ يُنْصَبُ جمع المؤنث السالم؟",
+                        options: [
+                            "عَلِمْتُ الأُمَّهاتِ ذَواتِ فَضْلٍ.",
+                            "عَلِمْتُ الأُمَّهاتَ ذَواتَ فَضْلٍ.",
+                            "عَلِمْتُ الأُمَّهاتُ ذَواتِ فَضْلٍ."
+                        ],
+                        correctIndex: 0,
+                        explanation: "عبقري! جمع المؤنث السالم والملحق به (الأُمَّهاتِ - ذَواتِ) يُنصبان بالكسرة نيابةً عن الفتحة."
+                    },
+                    {
+                        instruction: "انتبه للأسماء الخمسة!",
+                        question: "٣. أَخُوكَ واصِلٌ لِلرَّحِمِ.",
+                        subtext: "تذكر علامة نصب الأسماء الخمسة (أخوك)",
+                        options: [
+                            "رَأَيْتُ أَخاكَ واصِلًا لِلرَّحِمِ.",
+                            "رَأَيْتُ أَخُوكَ واصِلًا لِلرَّحِمِ.",
+                            "رَأَيْتُ أَخيكَ واصِلٌ لِلرَّحِمِ."
+                        ],
+                        correctIndex: 0,
+                        explanation: "ممتاز! (أَخاكَ) من الأسماء الخمسة فيُنصب بالألف لأنه مفعول به أول، و(واصِلًا) مفعول به ثانٍ منصوب بالفتحة."
+                    },
+                    {
+                        instruction: "أدخل فعلاً ناسخاً وغير ما يلزم",
+                        question: "٤. الْقِيَمُ الْإِنْسانِيَّةُ حامِيَةٌ لِلْإِنْسانِ.",
+                        subtext: "اختر الضبط الصحيح للمفعولين",
+                        options: [
+                            "وَجَدْتُ الْقِيَمَ الْإِنْسانِيَّةَ حامِيَةً لِلْإِنْسانِ.",
+                            "وَجَدْتُ الْقِيَمُ الْإِنْسانِيَّةُ حامِيَةً لِلْإِنْسانِ.",
+                            "وَجَدْتُ الْقِيَمَ الْإِنْسانِيَّةِ حامِيَةٌ لِلْإِنْسانِ."
+                        ],
+                        correctIndex: 0,
+                        explanation: "أحسنت! (الْقِيَمَ) مفعول به أول منصوب بالفتحة، والنعت (الْإِنْسانِيَّةَ) يتبعه في النصب، و(حامِيَةً) مفعول به ثانٍ منصوب."
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "نَشاط (٣): أَحْذِفُ ظَنَّ أَوْ إِحْدَى أَخَوَاتِهَا",
+                shortTitle: "نشاط (٣): حذف الفعل الناسخ",
+                icon: "✂️",
+                desc: "احذف الفعل الناسخ وفاعله، وأعد الجملة إلى مبتدأ وخبر مرفوعين.",
+                questions: [
+                    {
+                        instruction: "احذف (أَرَى) وأعد المبتدأ والخبر مرفوعين",
+                        question: "١. أَرَى الْبارِّينَ بِالْوالِدَيْنِ سُعَداءَ.",
+                        subtext: "انتبه لعلامة رفع جمع المذكر السالم (البارّين)",
+                        options: [
+                            "الْبارُّونَ بِالْوالِدَيْنِ سُعَداءُ.",
+                            "الْبارِّينَ بِالْوالِدَيْنِ سُعَداءُ.",
+                            "الْبارُّونَ بِالْوالِدَيْنِ سُعَداءَ."
+                        ],
+                        correctIndex: 0,
+                        explanation: "رائع! عند حذف (أرى) يعود المبتدأ مرفوعاً بالواو (الْبارُّونَ) لأنه جمع مذكر سالم، والخبر مرفوعاً بالضمة (سُعَداءُ)."
+                    },
+                    {
+                        instruction: "احذف (حَسِبْتُ) وغير ما يلزم",
+                        question: "٢. حَسِبْتُ الْقِيَمَ الْإِنْسانِيَّةَ مُقَيِّدَةً لِحُرِّيَّةِ الْبَشَرِ.",
+                        subtext: "أعد الحركة الأصلية للمبتدأ والخبر",
+                        options: [
+                            "الْقِيَمُ الْإِنْسانِيَّةُ مُقَيِّدَةٌ لِحُرِّيَّةِ الْبَشَرِ.",
+                            "الْقِيَمَ الْإِنْسانِيَّةَ مُقَيِّدَةٌ لِحُرِّيَّةِ الْبَشَرِ.",
+                            "الْقِيَمُ الْإِنْسانِيَّةُ مُقَيِّدَةً لِحُرِّيَّةِ الْبَشَرِ."
+                        ],
+                        correctIndex: 0,
+                        explanation: "ممتاز! تعود الجملة اسمية مكونة من مبتدأ مرفوع (الْقِيَمُ) وخبر مرفوع (مُقَيِّدَةٌ)."
+                    },
+                    {
+                        instruction: "احذف (وَجَدْتُ) وغير ما يلزم",
+                        question: "٣. وَجَدْتُ رِضا الأُمِّ سَبَباً مِنْ أَسْبابِ التَّوْفيقِ.",
+                        subtext: "لاحظ التغيير في كلمة (سبباً)",
+                        options: [
+                            "رِضا الأُمِّ سَبَبٌ مِنْ أَسْبابِ التَّوْفيقِ.",
+                            "رِضا الأُمِّ سَبَباً مِنْ أَسْبابِ التَّوْفيقِ.",
+                            "رِضا الأُمُّ سَبَبٌ مِنْ أَسْبابِ التَّوْفيقِ."
+                        ],
+                        correctIndex: 0,
+                        explanation: "أحسنت! (رِضا) مبتدأ مرفوع بالضمة المقدرة، و(سَبَبٌ) خبر مرفوع وعلامة رفعه الضمة الظاهرة."
+                    },
+                    {
+                        instruction: "احذف (زَعَمَ صَديقي) وغير ما يلزم",
+                        question: "٤. زَعَمَ صَديقي الِاسْتِغْناءَ عَنِ التَّواصُلِ بَيْنَ النَّاسِ مُمْكِناً.",
+                        subtext: "احذف الفعل والفاعل معاً",
+                        options: [
+                            "الِاسْتِغْناءُ عَنِ التَّواصُلِ بَيْنَ النَّاسِ مُمْكِنٌ.",
+                            "الِاسْتِغْناءَ عَنِ التَّواصُلِ بَيْنَ النَّاسِ مُمْكِنٌ.",
+                            "الِاسْتِغْناءُ عَنِ التَّواصُلِ بَيْنَ النَّاسِ مُمْكِناً."
+                        ],
+                        correctIndex: 0,
+                        explanation: "عمل رائع! (الِاسْتِغْناءُ) مبتدأ مرفوع بالضمة، و(مُمْكِنٌ) خبر مرفوع بالضمة."
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "نَشاط (٤): الْمُقَارَنَةُ بَيْنَ (كَانَ) وَ(إِنَّ) وَ(ظَنَّ)",
+                shortTitle: "نشاط (٤): كان وإنّ وظنّ",
+                icon: "⚖️",
+                desc: "ميّز بين عمل الأفعال الناسخة والحروف الناسخة وظن وأخواتها.",
+                questions: [
+                    {
+                        instruction: "الجملة الأولى: «أَبُوكَ ذُو رَحْمَةٍ»",
+                        question: "اختر الصياغة الصحيحة عند إدخال (كَانَ) ثُمَّ (إِنَّ) ثُمَّ (ظَنَّ) على الترتيب:",
+                        subtext: "تذكر إعراب الأسماء الخمسة (أبو / ذو) في الرفع والنصب!",
+                        options: [
+                            "كانَ أبوكَ ذا رحمةٍ / إنَّ أباكَ ذو رحمةٍ / ظننتُ أباكَ ذا رحمةٍ",
+                            "كانَ أباكَ ذو رحمةٍ / إنَّ أبوكَ ذا رحمةٍ / ظننتُ أبوكَ ذو رحمةٍ",
+                            "كانَ أبوكَ ذو رحمةٍ / إنَّ أباكَ ذا رحمةٍ / ظننتُ أباكَ ذو رحمةٍ"
+                        ],
+                        correctIndex: 0,
+                        explanation: "إبداع! (كانَ) ترفع الأول وتنصب الثاني، و(إنَّ) تنصب الأول وترفع الثاني، و(ظنَّ) تنصبهما معاً."
+                    },
+                    {
+                        instruction: "الجملة الثانية: «الْمُحْسِنُونَ مُقَدَّرُونَ لِلْإِنْسانِيَّةِ»",
+                        question: "أَيُّ الْجُمَلِ الْآتِيَةِ صَحِيحَةٌ عِنْدَ إِدْخَالِ (إِنَّ) عَلَى الْجُمْلَةِ؟",
+                        subtext: "إنَّ تنصب المبتدأ وترفع الخبر (جمع مذكر سالم)",
+                        options: [
+                            "إِنَّ الْمُحْسِنِينَ مُقَدَّرُونَ لِلْإِنْسانِيَّةِ.",
+                            "إِنَّ الْمُحْسِنُونَ مُقَدَّرِينَ لِلْإِنْسانِيَّةِ.",
+                            "إِنَّ الْمُحْسِنِينَ مُقَدَّرِينَ لِلْإِنْسانِيَّةِ."
+                        ],
+                        correctIndex: 0,
+                        explanation: "أحسنت! (الْمُحْسِنِينَ) اسم إنّ منصوب بالياء، و(مُقَدَّرُونَ) خبر إنّ مرفوع بالواو."
+                    },
+                    {
+                        instruction: "الجملة الثالثة: «الرَّحْمَةُ وَالتَّواصُلُ صِفَتانِ عَظيمَتانِ»",
+                        question: "اختر الصياغة الصحيحة عند إدخال (وَجَدْتُ) على هذه الجملة:",
+                        subtext: "انتبه للمثنى (صفتان عظيمتان) عند النصب!",
+                        options: [
+                            "وَجَدْتُ الرَّحْمَةَ وَالتَّواصُلَ صِفَتَيْنِ عَظيمَتَيْنِ.",
+                            "وَجَدْتُ الرَّحْمَةُ وَالتَّواصُلُ صِفَتانِ عَظيمَتانِ.",
+                            "وَجَدْتُ الرَّحْمَةَ وَالتَّواصُلَ صِفَتانِ عَظيمَتَيْنِ."
+                        ],
+                        correctIndex: 0,
+                        explanation: "ممتاز! (الرَّحْمَةَ) مفعول به أول منصوب بالفتحة، و(صِفَتَيْنِ) مفعول به ثانٍ منصوب بالياء لأنه مثنى."
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "نَشاط (٥): أُكْمِلُ بِمَفْعُولٍ بِهِ ثَانٍ وَأُبَيِّنُ عَلامَتَهُ",
+                shortTitle: "نشاط (٥): المفعول به الثاني",
+                icon: "🎯",
+                desc: "أكمل الجمل بمفعول به ثانٍ مناسب مع تحديد علامة إعرابه الصحيحة.",
+                questions: [
+                    {
+                        instruction: "أكمل بمفعول به ثانٍ مناسب",
+                        question: "١. وَجَدْتُ دُعاءَ الأُمِّ ......................... لِلنَّجاحِ.",
+                        subtext: "اختر الكلمة المنصوبة وعلامة إعرابها الصحيحة",
+                        options: [
+                            "مِفْتاحاً (علامة نصبه الفتحة)",
+                            "مِفْتاحٌ (علامة نصبه الضمة)",
+                            "مِفْتاحٍ (علامة نصبه الكسرة)"
+                        ],
+                        correctIndex: 0,
+                        explanation: "أحسنت! (مِفْتاحاً) مفعول به ثانٍ منصوب وعلامة نصبه الفتحة الظاهرة."
+                    },
+                    {
+                        instruction: "أكمل بمفعول به ثانٍ مناسب",
+                        question: "٢. أَظُنُّ الْحِوارَ ......................... لِحَلِّ الْخِلافاتِ.",
+                        subtext: "اختر الكلمة المناسبة للسياق والضبط النحوي",
+                        options: [
+                            "وَسيلَةً نَاجِحَةً (علامة نصبه الفتحة)",
+                            "وَسيلَةٌ نَاجِحَةٌ (علامة نصبه الضمة)",
+                            "وَسيلَتَيْنِ (علامة نصبه الألف)"
+                        ],
+                        correctIndex: 0,
+                        explanation: "رائع! (وَسيلَةً) مفعول به ثانٍ منصوب وعلامة نصبه الفتحة الظاهرة."
+                    },
+                    {
+                        instruction: "أكمل بمفعول به ثانٍ مناسب",
+                        question: "٣. أَرَى احْتِرامَ النَّفْسِ ......................... عَلَى النَّضْجِ.",
+                        subtext: "انتبه لحركة آخر الكلمة",
+                        options: [
+                            "دَليلاً (علامة نصبه الفتحة)",
+                            "دَليلٌ (علامة نصبه الضمة)",
+                            "دَليلٍ (علامة نصبه الكسرة)"
+                        ],
+                        correctIndex: 0,
+                        explanation: "ممتاز! (دَليلاً) مفعول به ثانٍ منصوب وعلامة نصبه الفتحة الظاهرة."
+                    }
+                ]
+            },
+            {
+                id: 6,
+                title: "نَشاط (٦): التَّحَدِّي الْخِتَامِيُّ وَالْإِعْرَابُ",
+                shortTitle: "نشاط (٦): التحدي الختامي",
+                icon: "👑",
+                desc: "اختبر براعتك في الإعراب واكتشاف الأخطاء النحوية لتفوز بالكأس!",
+                questions: [
+                    {
+                        instruction: "تحدي الإعراب الدقيق",
+                        question: "مَا إِعْرابُ كَلِمَةِ (سُعَداءَ) فِي جُمْلَةِ: «أَرَى الْبارِّينَ بِالْوالِدَيْنِ سُعَداءَ»؟",
+                        subtext: "تذكر أن كلمة (سُعَداءَ) ممنوعة من الصرف فلا تُنوَّن",
+                        options: [
+                            "مَفْعُولٌ بِهِ ثَانٍ مَنْصُوبٌ وَعَلَامَةُ نَصْبِهِ الْفَتْحَةُ",
+                            "حَالٌ مَنْصُوبَةٌ وَعَلَامَةُ نَصْبِهَا الْفَتْحَةُ",
+                            "خَبَرٌ مَرْفُوعٌ وَعَلَامَةُ رَفْعِهِ الضَّمَّةُ"
+                        ],
+                        correctIndex: 0,
+                        explanation: "إعراب نموذجي! (أرى) فعل قلبي ينصب مفعولين: (البارّين) مفعول به أول، و(سعداء) مفعول به ثانٍ منصوب بالفتحة."
+                    },
+                    {
+                        instruction: "صوّب الخطأ النحوي",
+                        question: "اكتشف الخطأ في الجملة الآتية: «حَسِبْتُ الْمُهْمِلُونَ نَاجِحُونَ»",
+                        subtext: "ما الصواب النحوي لهذه الجملة؟",
+                        options: [
+                            "حَسِبْتُ الْمُهْمِلِينَ نَاجِحِينَ.",
+                            "حَسِبْتُ الْمُهْمِلُونَ نَاجِحِينَ.",
+                            "حَسِبْتُ الْمُهْمِلِينَ نَاجِحُونَ."
+                        ],
+                        correctIndex: 0,
+                        explanation: "أنت بطل النحو! المفعول به الأول والثاني هنا جمع مذكر سالم، فيُنصبان بالياء: (الْمُهْمِلِينَ نَاجِحِينَ)."
+                    },
+                    {
+                        instruction: "لغز التمييز بين رأى البصرية والقلبية",
+                        question: "فِي أَيِّ جُمْلَةٍ مِمَّا يَلِي تَنْصِبُ (رَأَى) مَفْعُولَيْنِ؟",
+                        subtext: "تذكر: رأى القلبية (بمعنى علم) تنصب مفعولين، أما البصرية فتنصب مفعولاً واحداً",
+                        options: [
+                            "رَأَيْتُ الصِّدْقَ مَنْجَاةً لِلْإِنْسَانِ.",
+                            "رَأَيْتُ الْقَمَرَ مُنِيراً فِي السَّمَاءِ.",
+                            "رَأَيْتُ الطَّائِرَ مُحَلِّقاً فَوْقَ الشَّجَرَةِ."
+                        ],
+                        correctIndex: 0,
+                        explanation: "ذكي جداً! الصدق أمر معنوي يُدرك بالقلب والعقل لا بالعين، لذا (رأيت) هنا قلبية تنصب مفعولين (الصدقَ - منجاةً)."
+                    }
+                ]
+            }
+        ];
+
+        let currentLevelIndexL5 = 0;
+        let currentQuestionIndexL5 = 0;
+        let scoreL5 = 0;
+        let completedLevelsL5 = new Set();
+        let answeredCurrentL5 = false;
+
+        function hideAllScreensL5() {
+            ['start-screen-l5', 'map-screen-l5', 'play-screen-l5', 'result-screen-l5'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+        }
+
+        function showMapL5() {
+            playTone('click');
+            hideAllScreensL5();
+            const grid = document.getElementById('levels-grid-l5');
+            grid.innerHTML = '';
+
+            activitiesDataL5.forEach((act, idx) => {
+                const isDone = completedLevelsL5.has(act.id);
+                const card = document.createElement('div');
+                card.className = `cursor-pointer rounded-2xl p-5 border-2 transition-all transform hover:-translate-y-1 flex flex-col justify-between ${
+                    isDone ? 'bg-emerald-50/90 border-emerald-300 shadow-2xs' : 'bg-slate-50/70 hover:bg-white border-slate-200 hover:border-indigo-400 shadow-2xs'
+                }`;
+                card.onclick = () => startLevelL5(idx);
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-2xl">${act.icon}</span>
+                            <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${
+                                isDone ? 'bg-emerald-200 text-emerald-800' : 'bg-indigo-100 text-indigo-800'
+                            }">
+                                ${isDone ? 'مكتمل ✅' : `${act.questions.length} أسئلة`}
+                            </span>
+                        </div>
+                        <h4 class="font-black text-sm sm:text-base text-slate-800 mb-1">${act.shortTitle}</h4>
+                        <p class="text-[11px] text-slate-500 leading-relaxed mb-4">${act.desc}</p>
+                    </div>
+                    <div class="w-full text-center py-2 rounded-xl font-bold text-xs ${
+                        isDone ? 'bg-emerald-600 text-white' : 'bg-brand-royal text-white'
+                    }">
+                        ${isDone ? 'العب مجدداً 🔄' : 'ابدأ المحطة 🚀'}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById('map-screen-l5').classList.remove('hidden');
+        }
+
+        function startLevelL5(levelIdx) {
+            playTone('click');
+            currentLevelIndexL5 = levelIdx;
+            currentQuestionIndexL5 = 0;
+            hideAllScreensL5();
+            document.getElementById('play-screen-l5').classList.remove('hidden');
+            renderQuestionL5();
+        }
+
+        function renderQuestionL5() {
+            answeredCurrentL5 = false;
+            const level = activitiesDataL5[currentLevelIndexL5];
+            const q = level.questions[currentQuestionIndexL5];
+
+            document.getElementById('activity-title-display-l5').textContent = level.title;
+            document.getElementById('question-counter-l5').textContent = `السؤال ${currentQuestionIndexL5 + 1} من ${level.questions.length}`;
+            
+            const progressPercent = (currentQuestionIndexL5 / level.questions.length) * 100;
+            document.getElementById('progress-bar-l5').style.width = `${Math.max(10, progressPercent)}%`;
+
+            document.getElementById('instruction-tag-l5').textContent = q.instruction;
+            document.getElementById('question-text-l5').textContent = q.question;
+            document.getElementById('question-subtext-l5').textContent = q.subtext;
+
+            document.getElementById('feedback-box-l5').classList.add('hidden');
+
+            const optionsWithIndex = q.options.map((opt, i) => ({
+                text: opt,
+                isCorrect: i === q.correctIndex
+            }));
+            for (let i = optionsWithIndex.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsWithIndex[i], optionsWithIndex[j]] = [optionsWithIndex[j], optionsWithIndex[i]];
+            }
+
+            const optionsContainer = document.getElementById('options-container-l5');
+            optionsContainer.innerHTML = '';
+
+            optionsWithIndex.forEach((optObj, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-right bg-white hover:bg-sky-50 border-2 border-slate-200 rounded-xl p-3.5 sm:p-4 font-bold text-sm sm:text-base text-slate-800 flex items-center gap-3";
+                
+                const badgeLetters = ['أ', 'ب', 'ج', 'د'];
+                btn.innerHTML = `
+                    <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-800 font-black flex items-center justify-center shrink-0 text-xs">
+                        ${badgeLetters[idx] || '•'}
+                    </span>
+                    <span class="arabic-diacritics leading-relaxed">${optObj.text}</span>
+                `;
+
+                btn.onclick = () => handleAnswerL5(btn, optObj.isCorrect, q.explanation, optionsContainer);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function handleAnswerL5(selectedBtn, isCorrect, explanation, container) {
+            if (answeredCurrentL5) return;
+            answeredCurrentL5 = true;
+
+            const allBtns = container.querySelectorAll('button');
+            allBtns.forEach(b => b.disabled = true);
+
+            const feedbackBox = document.getElementById('feedback-box-l5');
+            const feedbackIcon = document.getElementById('feedback-icon-l5');
+            const feedbackTitle = document.getElementById('feedback-title-l5');
+            const feedbackExp = document.getElementById('feedback-explanation-l5');
+
+            if (isCorrect) {
+                playTone('correct');
+                selectedBtn.classList.add('correct');
+                scoreL5 += 25;
+                document.getElementById('score-display-l5').textContent = scoreL5;
+
+                feedbackBox.className = "rounded-2xl p-4 border-2 bg-emerald-50 border-emerald-300 text-emerald-950 animate-pop";
+                feedbackIcon.textContent = "🌟";
+                feedbackTitle.textContent = "إجابة صحيحة وممتازة! (+25 نقطة)";
+                feedbackExp.textContent = explanation;
+            } else {
+                playTone('wrong');
+                selectedBtn.classList.add('wrong');
+
+                feedbackBox.className = "rounded-2xl p-4 border-2 bg-rose-50 border-rose-300 text-rose-950 animate-pop";
+                feedbackIcon.textContent = "💡";
+                feedbackTitle.textContent = "حاول مرة أخرى في القادم! تعلّم القاعدة:";
+                feedbackExp.textContent = explanation;
+            }
+
+            const level = activitiesDataL5[currentLevelIndexL5];
+            const progressPercent = ((currentQuestionIndexL5 + 1) / level.questions.length) * 100;
+            document.getElementById('progress-bar-l5').style.width = `${progressPercent}%`;
+
+            const nextBtn = document.getElementById('next-btn-l5');
+            nextBtn.textContent = (currentQuestionIndexL5 + 1 < level.questions.length) ? "السؤال التالي ⬅️" : "إنهاء المحطة 🏆";
+
+            feedbackBox.classList.remove('hidden');
+        }
+
+        function nextQuestionL5() {
+            playTone('click');
+            const level = activitiesDataL5[currentLevelIndexL5];
+            if (currentQuestionIndexL5 + 1 < level.questions.length) {
+                currentQuestionIndexL5++;
+                renderQuestionL5();
+            } else {
+                playTone('win');
+                if (typeof confetti === 'function') confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+                completedLevelsL5.add(level.id);
+
+                hideAllScreensL5();
+                document.getElementById('result-screen-l5').classList.remove('hidden');
+                document.getElementById('final-score-l5').textContent = scoreL5;
+
+                const nextLevelBtn = document.getElementById('next-level-btn-l5');
+                if (currentLevelIndexL5 + 1 < activitiesDataL5.length) {
+                    document.getElementById('result-title-l5').textContent = `أتممت ${level.shortTitle} بنجاح!`;
+                    document.getElementById('result-desc-l5').textContent = "أداء مذهل! هل أنت مستعد للانتقال إلى المحطة التالية؟";
+                    nextLevelBtn.classList.remove('hidden');
+                } else {
+                    document.getElementById('result-emoji-l5').textContent = "👑";
+                    document.getElementById('result-title-l5').textContent = "مبارك يا بطل النحو العربي!";
+                    document.getElementById('result-desc-l5').textContent = "لقد أتممت جميع المحطات الستة بنجاح باهر وأصبحت خبيراً في ظن وأخواتها!";
+                    nextLevelBtn.classList.add('hidden');
+                }
+            }
+        }
+
+        function goToNextLevelL5() {
+            if (currentLevelIndexL5 + 1 < activitiesDataL5.length) {
+                startLevelL5(currentLevelIndexL5 + 1);
+            } else {
+                showMapL5();
+            }
+        }
+
+        // ================== محاكي عزل الناسخ النحوي ==================
+        const originDataL5 = {
+            'أَرَى الْبارِّينَ بِالْوالِدَيْنِ سُعَداءَ': {
+                after: '«الْبارُّونَ بِالْوالِدَيْنِ سُعَداءُ»',
+                verdict: 'عاد المبتدأ مرفوعاً بالواو (الْبارُّونَ) لأنه جمع مذكر سالم، والخبر مرفوعاً بالضمة (سُعَداءُ).'
+            },
+            'وَجَدْتُ الرَّحْمَةَ وَالتَّواصُلَ صِفَتَيْنِ عَظيمَتَيْنِ': {
+                after: '«الرَّحْمَةُ وَالتَّواصُلُ صِفَتانِ عَظيمَتانِ»',
+                verdict: 'عاد المبتدأ مرفوعاً بالضمة (الرَّحْمَةُ)، والخبر مرفوعاً بالألف (صِفَتانِ) لأنه مثنى.'
+            },
+            'رَأَيْتُ أَخاكَ واصِلًا لِلرَّحِمِ': {
+                after: '«أَخُوكَ واصِلٌ لِلرَّحِمِ»',
+                verdict: 'عاد المبتدأ مرفوعاً بالواو (أَخُوكَ) لأنه من الأسماء الخمسة، والخبر مرفوعاً بالضمة (واصِلٌ).'
+            },
+            'عَلِمْتُ الأُمَّهاتِ ذَواتِ فَضْلٍ': {
+                after: '«الأُمَّهاتُ ذَواتُ فَضْلٍ»',
+                verdict: 'عاد المبتدأ والخبر مرفوعين بالضمة الظاهرة بعد أن كانا منصوبين بالكسرة!'
+            }
+        };
+
+        function inspectOriginL5(sentence) {
+            playTone('correct');
+            const d = originDataL5[sentence];
+            document.getElementById('labOriginSentenceL5').innerText = sentence;
+            document.getElementById('labCutSentenceL5').innerText = d.after;
+            document.getElementById('labVerdictL5').innerText = d.verdict;
+        }
+
+        // ================== تقييم الاختبار المقنن والشهادة ==================
+        function evaluateQuizL5() {
+            const nameInput = document.getElementById('studentExamNameL5').value.trim();
+            if (!nameInput) {
+                alert("يرجى كتابة اسمك الثلاثي أولاً لتوليد شهادة التفوق!");
+                return;
+            }
+
+            let score = 0;
+            const answers = { l5_q1: 'correct', l5_q2: 'correct', l5_q3: 'correct', l5_q4: 'correct', l5_q5: 'correct', l5_q6: 'correct' };
+
+            for (let q in answers) {
+                const checked = document.querySelector(`input[name="${q}"]:checked`);
+                if (checked && checked.value === answers[q]) score++;
+            }
+
+            playTone('win');
+            document.getElementById('certNameDisplayL5').innerText = nameInput;
+            document.getElementById('certGradeDisplayL5').innerText = `${score} / 6`;
+            document.getElementById('certBoxL5').classList.remove('hidden');
+            document.getElementById('certBoxL5').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
